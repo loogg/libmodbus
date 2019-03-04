@@ -9,7 +9,7 @@ modbus-data.c
 if GetDepend(['PKG_USING_LIBMODBUS_RTU']):
     src += Glob('modbus-rtu.c')
 
-if if GetDepend(['PKG_USING_LIBMODBUS_TCP']):
+if GetDepend(['PKG_USING_LIBMODBUS_TCP']):
     src += Glob('modbus-tcp.c')
 
 CPPPATH = [cwd + '/../inc']
