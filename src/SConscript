@@ -14,6 +14,6 @@ if GetDepend(['PKG_USING_LIBMODBUS_TCP']):
 
 CPPPATH = [cwd + '/../inc']
 
-group = DefineGroup('Hello', src, depend = ['PKG_USING_LIBMODBUS'], CPPPATH = CPPPATH)
+group = DefineGroup('libmodbus', src, depend = ['PKG_USING_LIBMODBUS'], CPPPATH = CPPPATH)
 
 Return('group')
