@@ -15,7 +15,7 @@
 
 #include <dfs_posix.h>
 #include <sys/time.h>
-#include <sys/select.h>
+#include <dfs_select.h>
 
 #include "modbus-private.h"
 
