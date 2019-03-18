@@ -11,7 +11,7 @@
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
-#include <signal.h>
+
 #include <sys/types.h>
 
 #if defined(_WIN32)
@@ -28,7 +28,7 @@
 # define close closesocket
 #else
 # include <sys/socket.h>
-# include <sys/ioctl.h>
+
 
 #if defined(__OpenBSD__) || (defined(__FreeBSD__) && __FreeBSD__ < 5)
 # define OS_BSD
@@ -36,7 +36,6 @@
 #endif
 
 # include <netinet/in.h>
-# include <netinet/ip.h>
 # include <netinet/tcp.h>
 # include <arpa/inet.h>
 # include <netdb.h>
@@ -49,6 +48,10 @@
 #if defined(_AIX) && !defined(MSG_DONTWAIT)
 #define MSG_DONTWAIT MSG_NONBLOCK
 #endif
+
+#include <dfs_posix.h>
+#include <sys/time.h>
+#include <dfs_select.h>
 
 #include "modbus-private.h"
 
@@ -238,19 +241,7 @@ static int _modbus_tcp_set_ipv4_options(int s)
 #endif
 #endif
 
-#ifndef OS_WIN32
-    /**
-     * Cygwin defines IPTOS_LOWDELAY but can't handle that flag so it's
-     * necessary to workaround that problem.
-     **/
-    /* Set the IP low delay option */
-    option = IPTOS_LOWDELAY;
-    rc = setsockopt(s, IPPROTO_IP, IP_TOS,
-                    (const void *)&option, sizeof(int));
-    if (rc == -1) {
-        return -1;
-    }
-#endif
+
 
     return 0;
 }
@@ -378,7 +369,7 @@ static int _modbus_tcp_pi_connect(modbus_t *ctx)
                      &ai_hints, &ai_list);
     if (rc != 0) {
         if (ctx->debug) {
-            fprintf(stderr, "Error returned by getaddrinfo: %s\n", gai_strerror(rc));
+            fprintf(stderr, "Error returned by getaddrinfo: %d\n", rc);
         }
         errno = ECONNREFUSED;
         return -1;
@@ -582,7 +573,7 @@ int modbus_tcp_pi_listen(modbus_t *ctx, int nb_connection)
     rc = getaddrinfo(node, service, &ai_hints, &ai_list);
     if (rc != 0) {
         if (ctx->debug) {
-            fprintf(stderr, "Error returned by getaddrinfo: %s\n", gai_strerror(rc));
+            fprintf(stderr, "Error returned by getaddrinfo: %d\n", rc);
         }
         errno = ECONNREFUSED;
         return -1;

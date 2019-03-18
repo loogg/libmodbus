@@ -1,0 +1,16 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src = []
+
+if GetDepend(['PKG_USING_LIBMODBUS_RTU_EXAMPLE']):
+    src += Glob('modbus_rtu_test.c')
+
+if GetDepend(['PKG_USING_LIBMODBUS_TCP_EXAMPLE']):
+    src += Glob('modbus_tcp_test.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('libmodbus', src, depend = ['PKG_USING_LIBMODBUS'], CPPPATH = CPPPATH)
+
+Return('group')
