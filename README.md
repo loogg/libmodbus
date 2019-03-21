@@ -6,8 +6,8 @@ libmodbus是一个与使用Modbus协议的设备进行数据发送/接收的库�
 
 libmodbus提供了较低通信层的抽象，并在所有支持的平台上提供相同的API。
 
-本源码实现了在RT-Thread上的移植。源码地址：
-[https://github.com/loogg/libmodbus](https://github.com/loogg/libmodbus)  作者：[loogg](https://github.com/loogg)
+本源码实现了在RT-Thread上的移植，支持MODBUS-RTU和MODBUS-TCP。源码地址：
+<https://github.com/loogg/libmodbus>  作者：[loogg](https://github.com/loogg)
 
 ### 1.1 目录结构
 
@@ -31,6 +31,7 @@ libmodbus package 遵循 LGPLv2.1 许可，详见 `LICENSE` 文件。
 - pin
 - serial
 - POSIX
+- SAL
 
 ## 2、如何打开 libmodbus
 
@@ -48,10 +49,13 @@ RT-Thread online packages
 
 在打开 libmodbus package 后，当进行 bsp 编译时，它会被加入到 bsp 工程中进行编译。
 
+MODBUS-RTU和MODBUS-TCP使用示例在 [/examples](/examples) 下，使用方法与原生libmodbus一致。
+
 ## 4、注意事项
 
-在使用RS485模式时，先设置RS485模式，在设置控制引脚
+在使用RTU-RS485模式时，先设置引脚模式，再设置RS485模式，再设置控制引脚
 ```
+rt_pin_mode(MAX3491_RE, PIN_MODE_OUTPUT);
 modbus_t *ctx = RT_NULL;
 ctx = modbus_new_rtu("/dev/uart2", 115200, 'N', 8, 1);
 modbus_rtu_set_serial_mode(ctx, MODBUS_RTU_RS485);
@@ -62,4 +66,5 @@ modbus_rtu_set_rts(ctx, MAX3491_RE, MODBUS_RTU_RTS_UP);
 ## 5、联系方式 & 感谢
 
 * 维护：malongwei
-* 主页：https://github.com/loogg/libmodbus
+* 主页：<https://github.com/loogg/libmodbus>
+* 邮箱：<2544047213@qq.com>
