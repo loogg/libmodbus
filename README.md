@@ -49,6 +49,55 @@ RT-Thread online packages
 
 在打开 libmodbus package 后，当进行 bsp 编译时，它会被加入到 bsp 工程中进行编译。
 
+### 3.1、创建modbus RTU 环境
+
+- 初试化RTU环境指针 
+
+```
+modbus_t *modbus_new_rtu(const char *device, int baud,char parity, int data_bit, int stop_bit)
+```
+
+- 设置串口模式 
+
+```
+int modbus_rtu_set_serial_mode(modbus_t *ctx, int mode)
+```
+
+- 在RTU环境下设置RTS模式,为RS485模式下设置控制引脚
+
+```
+int modbus_rtu_set_rts(modbus_t *ctx, int rts_pin, int mode)
+```
+
+| mode | 说明 |
+| ---- | ---- |
+| MODBUS_RTU_RTS_NONE  | 无控制 |
+| MODBUS_RTU_RTS_UP | 高电平为发送模式 |
+| MODBUS_RTU_RTS_DOWN | 低电平为发送模式 |
+
+### 3.2、创建modbus TCP 环境
+
+- 初始化TCP环境指针 
+
+```
+modbus_t *modbus_new_tcp(const char *ip, int port)
+```
+
+- 作为客户端连接服务器
+
+```
+int modbus_connect(modbus_t *ctx)
+```
+
+- 作为服务器监听
+
+```
+int modbus_tcp_listen(modbus_t * ctx, int nb_connection)
+
+int modbus_tcp_accept(modbus_t * ctx, int * s)
+```
+
+### 3.3、示例
 MODBUS-RTU和MODBUS-TCP使用示例在 [/examples](/examples) 下，使用方法与原生libmodbus一致。
 
 ## 4、注意事项
