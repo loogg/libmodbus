@@ -697,7 +697,7 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     int slave;
     int function;
     uint16_t address;
-    uint8_t rsp[MAX_MESSAGE_LENGTH];
+    static uint8_t rsp[MAX_MESSAGE_LENGTH];
     int rsp_length = 0;
     sft_t sft;
 
