@@ -281,6 +281,7 @@ static ssize_t _modbus_rtu_send(modbus_t *ctx, const uint8_t *req, int req_lengt
 
         size = write(ctx->s, req, req_length);
 
+        rt_thread_mdelay(nms);
         ctx_rtu->set_rts(ctx, ctx_rtu->rts != MODBUS_RTU_RTS_UP);
 
         return size;
