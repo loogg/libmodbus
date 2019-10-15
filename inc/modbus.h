@@ -275,11 +275,21 @@ MODBUS_API float modbus_get_float_dcba(const uint16_t *src);
 MODBUS_API float modbus_get_float_badc(const uint16_t *src);
 MODBUS_API float modbus_get_float_cdab(const uint16_t *src);
 
+MODBUS_API long modbus_get_long_abcd(const uint16_t *src);
+MODBUS_API long modbus_get_long_dcba(const uint16_t *src);
+MODBUS_API long modbus_get_long_badc(const uint16_t *src);
+MODBUS_API long modbus_get_long_cdab(const uint16_t *src);
+
 MODBUS_API void modbus_set_float(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_abcd(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_dcba(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_badc(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_cdab(float f, uint16_t *dest);
+
+MODBUS_API void modbus_set_long_abcd(long l, uint16_t *dest);
+MODBUS_API void modbus_set_long_dcba(long l, uint16_t *dest);
+MODBUS_API void modbus_set_long_badc(long l, uint16_t *dest);
+MODBUS_API void modbus_set_long_cdab(long l, uint16_t *dest);
 
 #include "modbus-tcp.h"
 #include "modbus-rtu.h"

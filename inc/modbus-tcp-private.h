@@ -13,6 +13,7 @@
 
 #define _MODBUS_TCP_CHECKSUM_LENGTH    0
 
+
 /* In both structures, the transaction ID must be placed on first position
    to have a quick access not dependant of the TCP backend */
 typedef struct _modbus_tcp {
@@ -25,6 +26,7 @@ typedef struct _modbus_tcp {
     int port;
     /* IP address */
     char ip[16];
+    int domain;
 } modbus_tcp_t;
 
 #define _MODBUS_TCP_PI_NODE_LENGTH    1025
