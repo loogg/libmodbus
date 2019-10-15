@@ -9,7 +9,7 @@ static void test_thread(void *param)
     rt_thread_mdelay(5000);
     uint16_t tab_reg[64] = {0};
     modbus_t *ctx = RT_NULL;
-    ctx = modbus_new_tcp("192.168.1.138",601);
+    ctx = modbus_new_tcp("192.168.1.138", 601, AF_INET);
 
     modbus_set_slave(ctx, 3);
     modbus_connect(ctx);
@@ -45,8 +45,8 @@ static void test_thread(void *param)
 //    modbus_t *ctx = NULL;
 //    modbus_mapping_t *mb_mapping = NULL;
 //    int rc;
-//    
-//    ctx = modbus_new_tcp(RT_NULL, 1502);
+//
+//    ctx = modbus_new_tcp(RT_NULL, 1502, AF_INET);
 //    s = modbus_tcp_listen(ctx, 1);
 //    modbus_tcp_accept(ctx, &s);
 //    mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, 0,

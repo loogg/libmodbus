@@ -13,10 +13,6 @@
 
 #define _MODBUS_TCP_CHECKSUM_LENGTH    0
 
-#define _MODBUS_AT_SLAVE_TIME_OUT_SEC 60
-#define _MODBUS_AT_SLAVE_TIME_OUT_USEC 0
-#include "stdint.h"
-
 
 /* In both structures, the transaction ID must be placed on first position
    to have a quick access not dependant of the TCP backend */

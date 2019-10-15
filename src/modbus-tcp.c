@@ -697,20 +697,6 @@ int modbus_tcp_pi_accept(modbus_t *ctx, int *s)
 static int _modbus_tcp_select(modbus_t *ctx, fd_set *rset, struct timeval *tv, int length_to_read)
 {
     int s_rc;
-    modbus_tcp_t *ctx_tcp;
-    struct timeval temp_tv;
-    
-    ctx_tcp = ctx->backend_data;
-    switch (ctx_tcp->domain)
-    {
-        case AF_AT:
-            temp_tv.tv_sec = _MODBUS_AT_SLAVE_TIME_OUT_SEC;
-            temp_tv.tv_usec = _MODBUS_AT_SLAVE_TIME_OUT_USEC;
-            tv = &temp_tv;
-            break;
-        default:
-            break;
-    }
     
     while ((s_rc = select(ctx->s+1, rset, NULL, NULL, tv)) == -1) {
         if (errno == EINTR) {
