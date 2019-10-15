@@ -310,7 +310,7 @@ static int _modbus_tcp_connect(modbus_t *ctx)
     flags |= SOCK_NONBLOCK;
 #endif
 
-    ctx->s = socket(PF_INET, flags, 0);
+    ctx->s = socket(ctx_tcp->domain, flags, 0);
     if (ctx->s == -1) {
         return -1;
     }
@@ -326,7 +326,7 @@ static int _modbus_tcp_connect(modbus_t *ctx)
         printf("Connecting to %s:%d\n", ctx_tcp->ip, ctx_tcp->port);
     }
 
-    addr.sin_family = AF_INET;
+    addr.sin_family = ctx_tcp->domain;
     addr.sin_port = htons(ctx_tcp->port);
     addr.sin_addr.s_addr = inet_addr(ctx_tcp->ip);
     rc = _connect(ctx->s, (struct sockaddr *)&addr, sizeof(addr), &ctx->response_timeout);
@@ -485,7 +485,7 @@ int modbus_tcp_listen(modbus_t *ctx, int nb_connection)
     }
 #endif
 
-    new_s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    new_s = socket(ctx_tcp->domain, SOCK_STREAM, IPPROTO_TCP);
     if (new_s == -1) {
         return -1;
     }
@@ -498,7 +498,7 @@ int modbus_tcp_listen(modbus_t *ctx, int nb_connection)
     }
 
     memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
+    addr.sin_family = ctx_tcp->domain;
     /* If the modbus port is < to 1024, we need the setuid root. */
     addr.sin_port = htons(ctx_tcp->port);
     if (ctx_tcp->ip[0] == '0') {
@@ -697,6 +697,21 @@ int modbus_tcp_pi_accept(modbus_t *ctx, int *s)
 static int _modbus_tcp_select(modbus_t *ctx, fd_set *rset, struct timeval *tv, int length_to_read)
 {
     int s_rc;
+    modbus_tcp_t *ctx_tcp;
+    struct timeval temp_tv;
+    
+    ctx_tcp = ctx->backend_data;
+    switch (ctx_tcp->domain)
+    {
+        case AF_AT:
+            temp_tv.tv_sec = _MODBUS_AT_SLAVE_TIME_OUT_SEC;
+            temp_tv.tv_usec = _MODBUS_AT_SLAVE_TIME_OUT_USEC;
+            tv = &temp_tv;
+            break;
+        default:
+            break;
+    }
+    
     while ((s_rc = select(ctx->s+1, rset, NULL, NULL, tv)) == -1) {
         if (errno == EINTR) {
             if (ctx->debug) {
@@ -768,7 +783,7 @@ const modbus_backend_t _modbus_tcp_pi_backend = {
     _modbus_tcp_free
 };
 
-modbus_t* modbus_new_tcp(const char *ip, int port)
+modbus_t* modbus_new_tcp(const char *ip, int port, int domain)
 {
     modbus_t *ctx;
     modbus_tcp_t *ctx_tcp;
@@ -798,6 +813,7 @@ modbus_t* modbus_new_tcp(const char *ip, int port)
 
     ctx->backend_data = (modbus_tcp_t *)malloc(sizeof(modbus_tcp_t));
     ctx_tcp = (modbus_tcp_t *)ctx->backend_data;
+    ctx_tcp->domain = domain;
 
     if (ip != NULL) {
         dest_size = sizeof(char) * 16;
