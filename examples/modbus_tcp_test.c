@@ -3,22 +3,27 @@
 #include "stdio.h"
 #include "string.h"
 #include <dfs_posix.h>
+#include <sal_socket.h>
 
 static void test_thread(void *param)
 {
-    rt_thread_mdelay(5000);
     uint16_t tab_reg[64] = {0};
     modbus_t *ctx = RT_NULL;
-    ctx = modbus_new_tcp("192.168.1.138", 601, AF_INET);
-
+    
+    ctx = modbus_new_tcp("192.168.1.103", 601, AF_INET);
     modbus_set_slave(ctx, 3);
-    modbus_connect(ctx);
     modbus_set_response_timeout(ctx, 0, 1000000);
+_mbtcp_start:
+    if(modbus_connect(ctx) < 0)
+        goto _mbtcp_restart;
+    
     int num = 0;
     while (1)
     {
         memset(tab_reg, 0, 64 * 2);
         int regs = modbus_read_registers(ctx, 0, 20, tab_reg);
+        if(regs < 0)
+            goto _mbtcp_restart;
         printf("-------------------------------------------\n");
         printf("[%4d][read num = %d]", num, regs);
         num++;
@@ -29,23 +34,27 @@ static void test_thread(void *param)
         }
         printf("\n");
         printf("-------------------------------------------\n");
-        rt_thread_mdelay(5000);
+        rt_thread_mdelay(1000);
     }
+
+_mbtcp_restart:
     //7-关闭modbus端口
     modbus_close(ctx);
-
+    rt_thread_mdelay(2000);
+    goto _mbtcp_start;
+    
     //8-释放modbus资源
     modbus_free(ctx);
 }
 
 //static void test_thread(void *param)
 //{
-//    rt_thread_mdelay(5000);
+//    rt_thread_mdelay(10000);
 //    int s = -1;
 //    modbus_t *ctx = NULL;
 //    modbus_mapping_t *mb_mapping = NULL;
 //    int rc;
-//
+
 //    ctx = modbus_new_tcp(RT_NULL, 1502, AF_INET);
 //    s = modbus_tcp_listen(ctx, 1);
 //    modbus_tcp_accept(ctx, &s);

@@ -250,6 +250,7 @@ static int _connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen,
                     const struct timeval *ro_tv)
 {
     int rc = connect(sockfd, addr, addrlen);
+    
 
 #ifdef OS_WIN32
     int wsaError = 0;
@@ -315,13 +316,6 @@ static int _modbus_tcp_connect(modbus_t *ctx)
         return -1;
     }
 
-    rc = _modbus_tcp_set_ipv4_options(ctx->s);
-    if (rc == -1) {
-        close(ctx->s);
-        ctx->s = -1;
-        return -1;
-    }
-
     if (ctx->debug) {
         printf("Connecting to %s:%d\n", ctx_tcp->ip, ctx_tcp->port);
     }
@@ -329,7 +323,8 @@ static int _modbus_tcp_connect(modbus_t *ctx)
     addr.sin_family = ctx_tcp->domain;
     addr.sin_port = htons(ctx_tcp->port);
     addr.sin_addr.s_addr = inet_addr(ctx_tcp->ip);
-    rc = _connect(ctx->s, (struct sockaddr *)&addr, sizeof(addr), &ctx->response_timeout);
+    rt_memset(&(addr.sin_zero), 0, sizeof(addr.sin_zero));
+    rc = _connect(ctx->s, (struct sockaddr *)&addr, sizeof(struct sockaddr), &ctx->response_timeout);
     if (rc == -1) {
         close(ctx->s);
         ctx->s = -1;
