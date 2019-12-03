@@ -111,22 +111,7 @@ _mbtcp_start:
         rc = select(max_fd + 1, &readset, RT_NULL, RT_NULL, &select_timeout);
         if(rc < 0)
         {
-            if(FD_ISSET(server_fd, &readset))
-            {
-                goto _mbtcp_restart;
-            }
-
-            for(int i =0;i<MAX_CLIENT_NUM;i++)
-            {
-                if(client_session[i].fd >= 0)
-                {
-                    if(FD_ISSET(client_session[i].fd, &readset))
-                    {
-                        close(client_session[i].fd);
-                        client_session[i].fd = -1;
-                    }
-                }
-            }
+            goto _mbtcp_restart;
         }
         else if(rc > 0)
         {
@@ -174,9 +159,12 @@ _mbtcp_start:
                                 close(client_session[i].fd);
                                 client_session[i].fd = -1;
                             }
-                            client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * 1000);
+                            else
+                            {
+                                client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * 1000);
+                            }
                         }
-                        else if (rc <= 0)
+                        else
                         {
                             close(client_session[i].fd);
                             client_session[i].fd = -1;
