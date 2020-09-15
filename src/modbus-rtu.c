@@ -22,6 +22,9 @@
 #include "modbus-rtu.h"
 #include "modbus-rtu-private.h"
 
+#ifndef O_NDELAY
+#define O_NDELAY    _FNDELAY
+#endif
 
 /* Table of CRC values for high-order byte */
 static const uint8_t table_crc_hi[] = {
