@@ -335,7 +335,6 @@ static int _modbus_rtu_check_integrity(modbus_t *ctx, uint8_t *msg,
 {
     uint16_t crc_calculated;
     uint16_t crc_received;
-    int slave = msg[0];
 
     crc_calculated = crc16(msg, msg_length - 2);
     crc_received = (msg[msg_length - 2] << 8) | msg[msg_length - 1];

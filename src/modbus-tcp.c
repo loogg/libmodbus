@@ -232,7 +232,7 @@ static int _modbus_tcp_set_ipv4_options(int s)
 
     {
         /* Setting FIONBIO expects an unsigned long according to MSDN */
-        u32_t loption = 1;
+        uint32_t loption = 1;
         ioctlsocket(s, FIONBIO, &loption);
     }
 #endif
