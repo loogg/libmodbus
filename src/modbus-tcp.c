@@ -229,19 +229,13 @@ static int _modbus_tcp_set_ipv4_options(int s)
      * make sockets non-blocking */
     /* Do not care about the return value, this is optional */
 #if !defined(SOCK_NONBLOCK) && defined(FIONBIO)
-#ifdef OS_WIN32
+
     {
         /* Setting FIONBIO expects an unsigned long according to MSDN */
-        u_long loption = 1;
+        u32_t loption = 1;
         ioctlsocket(s, FIONBIO, &loption);
     }
-#else
-    option = 1;
-    ioctl(s, FIONBIO, &option);
 #endif
-#endif
-
-
 
     return 0;
 }
@@ -251,7 +245,6 @@ static int _connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen,
 {
     int rc = connect(sockfd, addr, addrlen);
     
-
 #ifdef OS_WIN32
     int wsaError = 0;
     if (rc == -1) {
@@ -313,6 +306,13 @@ static int _modbus_tcp_connect(modbus_t *ctx)
 
     ctx->s = socket(ctx_tcp->domain, flags, 0);
     if (ctx->s == -1) {
+        return -1;
+    }
+
+    rc = _modbus_tcp_set_ipv4_options(ctx->s);
+    if (rc == -1) {
+        close(ctx->s);
+        ctx->s = -1;
         return -1;
     }
 
@@ -416,7 +416,6 @@ static int _modbus_tcp_pi_connect(modbus_t *ctx)
 static void _modbus_tcp_close(modbus_t *ctx)
 {
     if (ctx->s != -1) {
-        shutdown(ctx->s, SHUT_RDWR);
         close(ctx->s);
         ctx->s = -1;
     }

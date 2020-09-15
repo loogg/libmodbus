@@ -295,25 +295,7 @@ static ssize_t _modbus_rtu_send(modbus_t *ctx, const uint8_t *req, int req_lengt
 
 static int _modbus_rtu_receive(modbus_t *ctx, uint8_t *req)
 {
-    int rc;
-    modbus_rtu_t *ctx_rtu = ctx->backend_data;
-
-    if (ctx_rtu->confirmation_to_ignore) {
-        _modbus_receive_msg(ctx, req, MSG_CONFIRMATION);
-        /* Ignore errors and reset the flag */
-        ctx_rtu->confirmation_to_ignore = FALSE;
-        rc = 0;
-        if (ctx->debug) {
-            printf("Confirmation to ignore\n");
-        }
-    } else {
-        rc = _modbus_receive_msg(ctx, req, MSG_INDICATION);
-        if (rc == 0) {
-            /* The next expected message is a confirmation to ignore */
-            ctx_rtu->confirmation_to_ignore = TRUE;
-        }
-    }
-    return rc;
+    return _modbus_receive_msg(ctx, req, MSG_INDICATION);
 }
 
 static ssize_t _modbus_rtu_recv(modbus_t *ctx, uint8_t *rsp, int rsp_length)
@@ -354,16 +336,6 @@ static int _modbus_rtu_check_integrity(modbus_t *ctx, uint8_t *msg,
     uint16_t crc_calculated;
     uint16_t crc_received;
     int slave = msg[0];
-
-    /* Filter on the Modbus unit identifier (slave) in RTU mode to avoid useless
-     * CRC computing. */
-    if (slave != ctx->slave && slave != MODBUS_BROADCAST_ADDRESS) {
-        if (ctx->debug) {
-            printf("Request for slave %d ignored (not %d)\n", slave, ctx->slave);
-        }
-        /* Following call to check_confirmation handles this error */
-        return 0;
-    }
 
     crc_calculated = crc16(msg, msg_length - 2);
     crc_received = (msg[msg_length - 2] << 8) | msg[msg_length - 1];
@@ -1253,8 +1225,6 @@ modbus_t* modbus_new_rtu(const char *device,
     /* The delay before and after transmission when toggling the RTS pin */
     ctx_rtu->rts_delay = ctx_rtu->onebyte_time;
 #endif
-
-    ctx_rtu->confirmation_to_ignore = FALSE;
 
     return ctx;
 }

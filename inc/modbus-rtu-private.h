@@ -70,8 +70,6 @@ typedef struct _modbus_rtu {
     int rts_pin;
     void (*set_rts) (modbus_t *ctx, int on);
 #endif
-    /* To handle many slaves on the same link */
-    int confirmation_to_ignore;
 } modbus_rtu_t;
 
 #endif /* MODBUS_RTU_PRIVATE_H */

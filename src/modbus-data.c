@@ -99,7 +99,7 @@ long modbus_get_long_abcd(const uint16_t *src)
     uint32_t i;
 
     i = modbus_ntohl(((uint32_t)src[0] << 16) + src[1]);
-    memcpy(&l, &i, sizeof(float));
+    memcpy(&l, &i, sizeof(long));
 
     return l;
 }
@@ -123,7 +123,7 @@ long modbus_get_long_dcba(const uint16_t *src)
     uint32_t i;
 
     i = modbus_ntohl(bswap_32((((uint32_t)src[0]) << 16) + src[1]));
-    memcpy(&l, &i, sizeof(float));
+    memcpy(&l, &i, sizeof(long));
 
     return l;
 }
@@ -147,7 +147,7 @@ long modbus_get_long_badc(const uint16_t *src)
     uint32_t i;
 
     i = modbus_ntohl((uint32_t)(bswap_16(src[0]) << 16) + bswap_16(src[1]));
-    memcpy(&l, &i, sizeof(float));
+    memcpy(&l, &i, sizeof(long));
 
     return l;
 }
@@ -171,7 +171,7 @@ long modbus_get_long_cdab(const uint16_t *src)
     uint32_t i;
 
     i = modbus_ntohl((((uint32_t)src[1]) << 16) + src[0]);
-    memcpy(&l, &i, sizeof(float));
+    memcpy(&l, &i, sizeof(long));
 
     return l;
 }
