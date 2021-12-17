@@ -693,7 +693,7 @@ static int _modbus_rtu_connect(modbus_t *ctx)
     tios.c_cflag |= (CREAD | CLOCAL);
     /* CSIZE, HUPCL, CRTSCTS (hardware flow control) */
 
-    /* Set data bits (5, 6, 7, 8 bits)
+    /* Set data bits (5, 6, 7, 8, 9, bits)
        CSIZE        Bit mask for data bits
     */
     tios.c_cflag &= ~CSIZE;
@@ -706,6 +706,9 @@ static int _modbus_rtu_connect(modbus_t *ctx)
         break;
     case 7:
         tios.c_cflag |= CS7;
+        break;
+    case 9:
+        tios.c_cflag |= CS9;
         break;
     case 8:
     default:
