@@ -1,5 +1,9 @@
 # LIBMODBUS
 
+## 不再维护
+
+libmodbus 放弃维护，推荐使用轻量级 Modbus 协议栈 [agile_modbus](https://github.com/loogg/agile_modbus)。
+
 ## 1、介绍
 
 libmodbus是一个与使用Modbus协议的设备进行数据发送/接收的库。该库包含各种后端通过不同网络进行通信（例如，RTU模式下的串口或TCP / IPv6中的以太网）。
@@ -57,13 +61,13 @@ RT-Thread online packages
 
 ### 3.1、创建modbus RTU 环境
 
-- 初始化RTU环境指针 
+- 初始化RTU环境指针
 
 ```
 modbus_t *modbus_new_rtu(const char *device, int baud,char parity, int data_bit, int stop_bit)
 ```
 
-- 设置串口模式 
+- 设置串口模式
 
 ```
 int modbus_rtu_set_serial_mode(modbus_t *ctx, int mode)
@@ -83,7 +87,7 @@ int modbus_rtu_set_rts(modbus_t *ctx, int rts_pin, int mode)
 
 ### 3.2、创建modbus TCP 环境
 
-- 初始化TCP环境指针 
+- 初始化TCP环境指针
 
 ```
 modbus_t *modbus_new_tcp(const char *ip, int port)
